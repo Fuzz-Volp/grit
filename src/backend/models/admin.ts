@@ -22,7 +22,7 @@ const AdminSchema: Schema = new Schema(
       required: true,
       select: false,
     },
-    isVerified: { type: Boolean },
+    isVerified: { type: Boolean, default: false },
   },
   {
     versionKey: false,

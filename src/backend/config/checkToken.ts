@@ -1,17 +1,28 @@
-// import { NextFunction, Request, Response } from "express";
-// import jwt from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { SECRET } from "./config";
 
-// export const checkToken = (req: Request, res: Response, next: NextFunction) => {
-//   let token = req.get("Authorization") || req.query.token;
-//   if (token) {
-//     token = token.replace("Bearer ", "");
-//     jwt.verify(token, process.env.SECRET, function (err: Error, decoded: string) {
-//       req.admin = err ? null : decoded.user;
-//       req.exp = err ? null : new Date(decoded.exp * 1000);
-//     });
-//     return next();
-//   } else {
-//     req.admin = null;
-//     return next();
-//   }
-// };
+export interface CustomRequest extends Request {
+  token: string | JwtPayload;
+}
+
+export const checkToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.get("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      throw new Error();
+    }
+
+    const decoded = jwt.verify(token, SECRET);
+    (req as CustomRequest).token = decoded;
+
+    next();
+  } catch (error) {
+    res.status(401).send("Please Authenticate");
+  }
+};

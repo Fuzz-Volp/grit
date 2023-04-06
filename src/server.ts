@@ -3,7 +3,8 @@
 import express from "express";
 import logger from "morgan";
 import cors from "cors";
-import adminRoutes from "./backend/routes/api/Admin";
+import adminRoutes from "./backend/routes/api/admin";
+import { validateAdmin } from "./backend/config/validateAdmin";
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.use((req, res, next) => {
  */
 
 // Admin
-app.use("/api/admins", adminRoutes);
+app.use("/api/admins", validateAdmin, adminRoutes);
 
 // Put API routes here, before the "catch all" route
 app.get("/api", (req, res) => {
